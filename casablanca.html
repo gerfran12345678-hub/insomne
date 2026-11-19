@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo CasaBlanca Lunch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: cálida y casera, de cocina de casa; clara para un dueño ocupado.
+   IDEA: el WhatsApp del negocio funcionando solo, con el ticket de cocina al lado.
+   PICTURE: el teléfono con el chat vivo + el ticket del pedido que se va llenando.
+   COLOUR and TYPE: blanco, negro y verde hoja (las hierbas de su catálogo); Fraunces para títulos, DM Sans para el chat.
+   LAYOUT: título corto arriba; chat y ticket lado a lado, apilados en el teléfono. */
+:root{color-scheme:light dark;--bg:light-dark(#f6f4ef,#0f1110);--card:light-dark(#fff,#181b19);--ink:light-dark(#151515,#eceae4);--mute:light-dark(#6b6b66,#a3a39c);--leaf:#4f7a2a;--leaf2:light-dark(#e6efd9,#22301a);--line:light-dark(#e3e0d8,#2a2e2b);--chat:light-dark(#efeae2,#0c1310);--me:light-dark(#d9fdd3,#1f4d2b);--them:light-dark(#fff,#1d2421)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "DM Sans",system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(20px,3.5vw,48px) max(4vw,14px);max-width:1180px;margin:0 auto}
+h1{font:700 clamp(30px,4.4vw,46px)/1.05 Fraunces,Georgia,serif;margin:0 0 8px;text-wrap:balance}
+.lead{margin:0;color:var(--mute);max-width:62ch}
+.tag{display:inline-block;background:var(--leaf);color:#fff;border-radius:99px;padding:3px 12px;font-size:13px;font-weight:700;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:22px;margin-top:22px;align-items:start}
+.phone{background:var(--card);border:1px solid var(--line);border-radius:28px;overflow:hidden;box-shadow:0 18px 40px -22px rgba(0,0,0,.35);display:flex;flex-direction:column;height:min(78vh,720px);min-height:520px}
+.top{display:flex;gap:12px;align-items:center;padding:12px 16px;background:var(--leaf);color:#fff}
+.av{width:42px;height:42px;border-radius:50%;background:#fff;color:#151515;display:grid;place-items:center;font:700 15px Fraunces,serif;flex:none}
+.top b{display:block;font-size:16px}.top small{opacity:.85;font-size:13px}
+.ia{margin-left:auto;font-size:13px;background:rgba(255,255,255,.18);border-radius:99px;padding:3px 10px;white-space:nowrap}
+#log{flex:1;overflow-y:auto;padding:16px 12px;background:var(--chat);display:flex;flex-direction:column;gap:6px}
+.m{max-width:84%;padding:8px 12px 18px;border-radius:12px;position:relative;white-space:pre-wrap;font-size:15.5px;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+.m.u{align-self:flex-end;background:var(--me);border-top-right-radius:4px}
+.m.b{align-self:flex-start;background:var(--them);border-top-left-radius:4px}
+.m time{position:absolute;right:10px;bottom:3px;font-size:11px;color:var(--mute)}
+.typing{align-self:flex-start;background:var(--them);border-radius:12px;padding:10px 14px;font-size:13px;color:var(--mute)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:8px 12px;background:var(--card);border-top:1px solid var(--line)}
+.chips button{flex:none;border:1px solid var(--leaf);background:transparent;color:var(--leaf);border-radius:99px;padding:8px 14px;font:500 14px "DM Sans",sans-serif;min-height:40px;cursor:pointer}
+:root[data-theme=dark] .chips button{color:#a6d07a;border-color:#6f9c45}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .chips button{color:#a6d07a;border-color:#6f9c45}}
+form{display:flex;gap:8px;padding:10px 12px;background:var(--card)}
+input{flex:1;font:16px "DM Sans",sans-serif;padding:11px 16px;border-radius:99px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+input:focus,button:focus-visible{outline:3px solid #8fbf5c;outline-offset:1px}
+.send{width:46px;height:46px;border-radius:50%;border:0;background:var(--leaf);color:#fff;font-size:20px;cursor:pointer;flex:none}
+.ticket{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;position:sticky;top:16px}
+.ticket h2{font:700 22px/1.1 Fraunces,serif;margin:0 0 4px}
+.ticket .sub{color:var(--mute);font-size:14px;margin:0 0 14px}
+.st{display:inline-block;font-size:13px;font-weight:700;border-radius:99px;padding:3px 10px;background:var(--leaf2);color:var(--leaf)}
+:root[data-theme=dark] .st{color:#a6d07a}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15px}
+td{padding:7px 0;border-bottom:1px dashed var(--line);vertical-align:top}
+td.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tot td{border:0;font-weight:700;font-size:18px;padding-top:10px}
+dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:10px 0 0;font-size:14.5px}
+dt{color:var(--mute)}dd{margin:0}
+.empty{color:var(--mute);font-size:14.5px;margin:10px 0}
+.menu{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+.menu h3{margin:0 0 6px;font-size:15px}
+.menu table{margin:0;font-size:14px}
+.foot{color:var(--mute);font-size:13px;margin-top:18px}
+@media(max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}.ticket{position:static}.phone{height:76vh}}
+@media(prefers-reduced-motion:no-preference){.m{animation:pop .18s ease-out}@keyframes pop{from{transform:translateY(6px);opacity:0}}}
+</style>
+</head>
+<body>
+<main class="band">
+  <span class="tag">Demo · hecha por Insomne</span>
+  <h1>Así contesta el asistente de CasaBlanca Lunch</h1>
+  <p class="lead">Escríbele como lo haría un cliente: pide el menú, arma un pedido o pregunta por el delivery. A la derecha ves cómo les llega el pedido a ustedes, ya ordenado.</p>
+  <div class="grid">
+    <section class="phone" aria-label="Chat de prueba">
+      <div class="top"><div class="av" aria-hidden="true">CB</div><div><b>CasaBlanca Lunch</b><small id="estado">en línea · responde al instante</small></div><span class="ia" id="modo">Demo</span></div>
+      <div id="log" role="log" aria-live="polite"></div>
+      <div class="chips" id="chips"></div>
+      <form id="f"><input id="t" autocomplete="off" placeholder="Escribe un mensaje" aria-label="Mensaje"><button class="send" aria-label="Enviar">➤</button></form>
+    </section>
+    <aside class="ticket" aria-label="Pedido recibido">
+      <h2>Así les llega el pedido</h2>
+      <p class="sub">Lo que el asistente le pasa a su equipo para despachar.</p>
+      <span class="st" id="st">Esperando cliente</span>
+      <div id="items"><p class="empty">Todavía no hay productos. Prueba con «quiero 2 kg de carne mechada».</p></div>
+      <dl id="datos"></dl>
+      <div class="menu"><h3>Catálogo que conoce el asistente</h3><table id="cat"></table></div>
+      <p class="foot">Demo de prueba. El costo del delivery, las zonas y las formas de pago se agregan cuando CasaBlanca los confirme.</p>
+    </aside>
+  </div>
+</main>
+<script>
+{
+const P=[
+ {k:'mechada',n:'Carne mechada',re:/mechad/,p:[9,18]},
+ {k:'molida',n:'Carne molida',re:/molid/,p:[8,16]},
+ {k:'pollo',n:'Pollo esmechado',re:/pollo/,p:[8,16]},
+ {k:'cazon',n:'Pescado (cazón)',re:/caz[oó]n|pescado/,p:[11,22]},
+ {k:'caraota',n:'Caraota',re:/caraota/,p:[6,12]}];
+const W={un:1,una:1,uno:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,medio:.5,media:.5};
+const $=s=>document.querySelector(s);
+const log=$('#log'),inp=$('#t');
+let cart={},stage='browse',pend=null,data={},hist=[],sample=null,num=1040+Math.floor(Math.random()*50);
+const money=v=>'$'+(Math.round(v*100)/100).toString();
+const kgTxt=kg=>kg===.5?'500 g':(kg%1? (Math.floor(kg)+' kg y 500 g'):kg+' kg');
+const price=(p,kg)=>{const n1=Math.floor(kg),h=kg-n1>=.5?1:0;return n1*p.p[1]+h*p.p[0]};
+const total=()=>Object.entries(cart).reduce((s,[k,kg])=>s+price(P.find(p=>p.k===k),kg),0);
+const hora=()=>new Date().toLocaleTimeString('es-VE',{hour:'numeric',minute:'2-digit'});
+document.getElementById('cat').innerHTML='<tr><td></td><td class="n">500 g</td><td class="n">1 kg</td></tr>'+P.map(p=>`<tr><td>${p.n}</td><td class="n">${money(p.p[0])}</td><td class="n">${money(p.p[1])}</td></tr>`).join('');
+function add(cls,txt){const d=document.createElement('div');d.className='m '+cls;d.textContent=txt;const t=document.createElement('time');t.textContent=hora();d.appendChild(t);log.appendChild(d);log.scrollTop=log.scrollHeight}
+function chips(list){$('#chips').innerHTML=list.map(c=>`<button type="button">${c}</button>`).join('')}
+$('#chips').addEventListener('click',e=>{if(e.target.tagName==='BUTTON'){send(e.target.textContent)}});
+function render(){
+ const ks=Object.keys(cart);
+ $('#items').innerHTML=ks.length?'<table>'+ks.map(k=>{const p=P.find(x=>x.k===k);return`<tr><td>${p.n} · ${kgTxt(cart[k])}</td><td class="n">${money(price(p,cart[k]))}</td></tr>`}).join('')+`<tr class="tot"><td>Total productos</td><td class="n">${money(total())}</td></tr></table>`:'<p class="empty">Todavía no hay productos. Prueba con «quiero 2 kg de carne mechada».</p>';
+ const rows=[['Pedido','#CB-'+num],['Cliente',data.nombre],['Dirección',data.dir],['Pago',data.pago],['Delivery',ks.length?'por confirmar según la zona':'']].filter(r=>r[1]);
+ $('#datos').innerHTML=rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1].replace(/</g,'&lt;')}</dd>`).join('');
+ $('#st').textContent={browse:ks.length?'Armando pedido':'Esperando cliente',dir:'Pidiendo dirección',pago:'Pidiendo forma de pago',done:'Pedido nuevo · listo para despachar',human:'Pasado a una persona'}[stage];
+}
+function menuTxt(){return 'Esta semana tenemos comida casera congelada, empacada al vacío y lista para llevar:\n\n'+P.map(p=>`• ${p.n}: ${money(p.p[0])} (500 g) · ${money(p.p[1])} (1 kg)`).join('\n')+'\n\n¿Qué te provoca? Dime el producto y la cantidad.'}
+function qty(s){
+ let m;
+ if(m=s.match(/(\d+(?:[.,]\d+)?)\s*(kg|kilos?|k)\b/))return parseFloat(m[1].replace(',','.'));
+ if(m=s.match(/(\d{3,4})\s*(g|gr|grs|gramos)?\b/)){const g=+m[1];if(g>=250&&g<=5000)return Math.round(g/500)/2}
+ if(m=s.match(/\b(un|una|uno|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|medio|media)\s+(kilos?|kg)/))return W[m[1]];
+ if(/medio kilo|1\/2/.test(s))return .5;
+ if(m=s.match(/(\d+|un|una|dos|tres|cuatro|cinco)\s+(paquetes?|bolsas?|empaques?)(?:\s+de\s+(500|1\s*kg|un kilo|kilo|medio))?/)){const n=W[m[1]]??+m[1];if(!m[3])return {packs:n};return n*(/500|medio/.test(m[3])?.5:1)}
+ return null;
+}
+function norm(kg){return Math.max(.5,Math.round(kg*2)/2)}
+function rules(raw){
+ const s=raw.toLowerCase();
+ if(/persona|humano|asesor|alguien real|hablar con/.test(s)){stage='human';return'¡Claro! Le paso tu conversación a una persona del equipo de CasaBlanca y te escribe en breve. 🙌'}
+ if(stage==='dir'){const pp=raw.split(/,|\n/);data.nombre=pp[0].trim().slice(0,40);data.dir=(pp.length>1?pp.slice(1).join(',').trim():raw).slice(0,140);stage='pago';return'Anotado ✅ ¿Cómo prefieres pagar? Dime el método y al confirmar te pasamos los datos.'}
+ if(stage==='pago'){data.pago=raw.slice(0,60);stage='done';chips(['Quiero agregar algo','¿Cuándo llega?']);return`¡Listo! Tu pedido #CB-${num} quedó registrado:\n\n`+Object.entries(cart).map(([k,kg])=>`• ${P.find(p=>p.k===k).n} · ${kgTxt(kg)}`).join('\n')+`\n\nTotal productos: ${money(total())}\nEl delivery te lo confirmamos según tu zona. ¡Gracias por pedir en CasaBlanca! 🍽️`}
+ if(/quita|borra|elimina|cancela|ya no/.test(s)){const p=P.find(p=>p.re.test(s));if(p&&cart[p.k]){delete cart[p.k];return`Listo, quité ${p.n.toLowerCase()}. `+(Object.keys(cart).length?`Ahora vas en ${money(total())}.`:'Tu pedido está vacío.')}cart={};return'Listo, vacié tu pedido. ¿Empezamos de nuevo?'}
+ const segs=s.split(/\s+y\s+|,|\+|\n/);let added=[],asked=null;
+ for(const g of segs){const p=P.find(p=>p.re.test(g));if(!p)continue;let q=qty(g);
+  if(q&&q.packs){asked={p,packs:q.packs};continue}
+  if(q==null){if(/precio|cu[aá]nto|vale|cuesta/.test(s)&&!/quiero|dame|p[ií]de|mand|env/.test(s))return`${p.n}: ${money(p.p[0])} los 500 g y ${money(p.p[1])} el kilo. ¿Cuánto te anoto?`;asked={p};continue}
+  q=norm(q);cart[p.k]=(cart[p.k]||0)+q;added.push(`${p.n} · ${kgTxt(q)} = ${money(price(p,q))}`)}
+ if(!added.length&&pend){const q=qty(s)??(/^\s*(\d+)\s*$/.test(s)?null:null);if(q&&!q.packs){const v=norm(q);cart[pend.k]=(cart[pend.k]||0)+v;added.push(`${pend.n} · ${kgTxt(v)} = ${money(price(pend,v))}`);pend=null}}
+ if(added.length){pend=null;chips(['Eso es todo','Agregar caraota','¿Hacen delivery a Chacao?']);return'Anotado ✅\n'+added.join('\n')+`\n\nVas en ${money(total())}. ¿Algo más o cerramos el pedido?`}
+ if(asked){pend=asked.p;chips(['500 g','1 kg','2 kg']);return asked.packs?`¿Los ${asked.packs} paquetes de ${asked.p.n.toLowerCase()} los quieres de 500 g o de 1 kg?`:`¿Cuánto ${asked.p.n.toLowerCase()} te anoto: 500 g, 1 kg o más?`}
+ if(/eso es todo|ser[ií]a todo|listo|confirm|nada m[aá]s|cerr|es todo/.test(s)){if(!Object.keys(cart).length)return'Todavía no tienes productos. ¿Te paso el menú?';stage='dir';chips([]);return`Perfecto: ${money(total())} en productos. ¿A nombre de quién y a qué dirección lo llevamos?`}
+ if(/delivery|env[ií]o|zona|llegan|despach|mandan a|llevan/.test(s))return'¡Sí! Hacemos delivery en Caracas. El costo depende de la zona: dime tu urbanización y al cerrar el pedido te confirmamos el envío.';
+ if(/pag|zelle|pago m[oó]vil|efectivo|transfer|binance|d[oó]lar/.test(s))return'Al confirmar el pedido te pasamos los datos de pago. ¿Qué te gustaría pedir?';
+ if(/congel|dura|vac[ií]o|calent|prepar|descongel/.test(s))return'Vienen congelados y empacados al vacío: los guardas en el congelador y los calientas cuando quieras. ¿Te anoto alguno?';
+ if(/cu[aá]ndo llega|tarda|demora|hora/.test(s))return'Apenas confirmemos tu pedido te decimos la hora de entrega. 🛵';
+ if(/men[uú]|cat[aá]logo|qu[eé] (tienen|hay|venden)|precio|cu[aá]nto|opciones/.test(s)){chips(['Quiero 2 kg de carne mechada','1 kg de pollo y 500 g de caraota','¿Hacen delivery a Chacao?']);return menuTxt()}
+ if(/hola|buen[oa]s|saludos|hey|epa/.test(s)){chips(['Ver menú','Quiero 2 kg de carne mechada','Quiero hablar con una persona']);return'¡Hola! 👋 Bienvenido a CasaBlanca Lunch. Tenemos comida casera congelada, lista para llevar. ¿Te paso el menú de la semana?'}
+ return'Te ayudo con el menú, tu pedido y el delivery. ¿Te paso el catálogo de esta semana?';
+}
+async function ai(raw){
+ const sys=`Eres el asistente de WhatsApp de CasaBlanca Lunch (Caracas): comida casera congelada, empacada al vacío, menú semanal. Catálogo (precio 500 g / 1 kg): ${P.map(p=>`${p.k}=${p.n} $${p.p[0]}/$${p.p[1]}`).join('; ')}. No inventes zonas, costos de delivery, formas de pago ni tiempos: di que se confirman al cerrar. Si piden una persona, pásalos. Tono venezolano, cálido y breve (máx. 3 líneas), sin calcular totales (la app los pone). Flujo: armar pedido → pedir nombre y dirección → pedir forma de pago → confirmar.
+Estado actual: carrito=${JSON.stringify(cart)} (kg), datos=${JSON.stringify(data)}.
+Devuelve SOLO JSON: {"reply": string, "cart": {producto_k: kg múltiplo de 0.5}, "nombre": string|null, "direccion": string|null, "pago": string|null, "etapa": "browse"|"dir"|"pago"|"done"|"human"}`;
+ const msgs=[...hist.slice(-10),{role:'user',content:sys+'\n\nMensaje del cliente: '+raw}];
+ const r=await sample.json(msgs,{modelTier:'quick',cache:false});
+ if(!r||typeof r.reply!=='string')throw 0;
+ const c={};for(const[k,v]of Object.entries(r.cart||{}))if(P.find(p=>p.k===k)&&+v>0)c[k]=norm(+v);
+ const changed=JSON.stringify(c)!==JSON.stringify(cart);cart=c;
+ if(r.nombre)data.nombre=r.nombre;if(r.direccion)data.dir=r.direccion;if(r.pago)data.pago=r.pago;
+ if(['browse','dir','pago','done','human'].includes(r.etapa))stage=r.etapa;
+ return r.reply+(changed&&Object.keys(cart).length?`\n\nVas en ${money(total())}.`:'');
+}
+let busy=false;
+async function send(txt){
+ txt=txt.trim();if(!txt||busy)return;busy=true;inp.value='';add('u',txt);
+ const ty=document.createElement('div');ty.className='typing';ty.textContent='escribiendo…';log.appendChild(ty);log.scrollTop=log.scrollHeight;
+ let out;
+ if(sample){try{out=await ai(txt)}catch(e){if(e&&e.code==='not_granted'){sample=null;$('#modo').textContent='Demo'}out=null}}
+ if(!out){await new Promise(r=>setTimeout(r,450));out=rules(txt)}
+ hist.push({role:'user',content:txt},{role:'assistant',content:out});
+ ty.remove();add('b',out);render();busy=false;inp.focus();
+}
+$('#f').addEventListener('submit',e=>{e.preventDefault();send(inp.value)});
+add('b','¡Hola! 👋 Soy el asistente de CasaBlanca Lunch. Te paso el menú, armo tu pedido y lo dejo listo para el delivery, a cualquier hora. ¿Qué te provoca hoy?');
+chips(['Ver menú','Quiero 2 kg de carne mechada','1 kg de pollo y 500 g de caraota','¿Hacen delivery a Chacao?','Quiero hablar con una persona']);
+render();
+if(window.claude&&claude.use)claude.use('sample').then(s=>{if(s){sample=s;$('#modo').textContent='IA en vivo'}}).catch(()=>{});
+}
+</script>
+</body>
+</html>
